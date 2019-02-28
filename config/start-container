@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+set -e
+
+env=${APP_ENV:-production}
+role=${CONTAINER_ROLE:-app}
+
+echo "The env is ${env}"
+
+# Run PHP-FPM as current user
+if [ ! -z "$APP_USER" ]; then
+    sed -i "s/user\ \=.*/user\ \= $APP_USER/g" /etc/php7/php-fpm.d/www.conf
+
+    # Set UID of user "appuser"
+    sed -i "s/65534/$APP_USER/g" /etc/passwd
+fi
+
+if [ "$role" = "app" ]; then
+
+    cd ~/ && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
+else
+    echo "Could not match the container role \"$role\""
+    exit 1
+fi
