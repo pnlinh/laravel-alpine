@@ -32,13 +32,13 @@ if [ "$role" = "app" ]; then
     cd ~/ && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
 elif [ "$role" = "queue" ]; then
-    php artisan horizon
-    exit 1
+    sudo -u nobody php artisan horizon
+    exit 1e
 
 elif [ "$role" = "scheduler" ]; then
     while [ true ]
     do
-      php artisan schedule:run --verbose --no-interaction &
+      sudo -u nobody php artisan schedule:run --verbose --no-interaction &
       sleep 60
     done
 
