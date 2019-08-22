@@ -13,6 +13,10 @@ if [ ! -z "$APP_USER" ]; then
     sed -i "s/65534/$APP_USER/g" /etc/passwd
 fi
 
+if [ ! -z "$APP_USER_GROUP" ]; then
+    sed -i "s/65534/$APP_USER_GROUP/g" /etc/group
+fi
+
 # Cache configuration
 if [ "$env" != "local" && "$laravel" == "laravel" ]; then
     echo "Caching configuration"
