@@ -10,7 +10,7 @@ echo "The env is ${env}"
 
 # Run PHP-FPM as current user
 if [ ! -z "$APP_USER" ]; then
-    sed -i "s/65534/$APP_USER/g" /etc/passwd
+    sed -i "s/65534:65534/$APP_USER:$APP_USER_GROUP/g" /etc/passwd
 fi
 
 if [ ! -z "$APP_USER_GROUP" ]; then
@@ -18,16 +18,21 @@ if [ ! -z "$APP_USER_GROUP" ]; then
 fi
 
 # Cache configuration
-if [ "$env" != "local" && "$laravel" == "laravel" ]; then
-    echo "Caching configuration"
-    (
-        php artisan config:cache &&
-        php artisan view:cache &&
-        php artisan route:cache
-    )
+if [ "$env" != "local" ]; then
+    # Optimize laravel application for production.
+    if [ "$laravel" == "laravel" ]; then
+        echo "Caching configuration"
+        (
+            php artisan config:cache &&
+            php artisan view:cache &&
+            php artisan route:cache
+        )
+    fi
 
 # Enable development features.
 else
+    echo "Dev: Opcache disabled."
+
     sed -i "s/opcache.validate_timestamps=0/opcache.validate_timestamps=1/g" /etc/php7/conf.d/opcache.ini
 
 fi
@@ -36,13 +41,13 @@ if [ "$role" = "app" ]; then
     cd ~/ && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
 elif [ "$role" = "queue" ]; then
-    sudo -u nobody php artisan horizon
+    sudo -u nobody -g nobody php artisan horizon
     exit 1e
 
 elif [ "$role" = "scheduler" ]; then
     while [ true ]
     do
-      sudo -u nobody php artisan schedule:run --verbose --no-interaction &
+      sudo -u nobody -g nobody php artisan schedule:run --verbose --no-interaction &
       sleep 60
     done
 
