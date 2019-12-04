@@ -1,0 +1,1 @@
+docker run --rm -it selmonal/laravel-alpine:7.3 sh
