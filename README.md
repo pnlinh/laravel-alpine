@@ -8,7 +8,7 @@ docker run -p 8080:80 -v `pwd`:/app selmonal/laravel-alpine:7.3
 
 Run a production container:
 
-On producation environment it will cache configs, views and routes automatically.
+On producation environment it will cache configs, views and routes automatically and enable opcache.
 
 ```
 docker run -p 8080:80 -v `pwd`:/app -e APP_ENV=production selmonal/laravel-alpine:7.3
