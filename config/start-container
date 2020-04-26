@@ -10,11 +10,11 @@ echo "The env is ${env}"
 
 # Run PHP-FPM as current user
 if [ ! -z "$APP_USER" ]; then
-    sed -i "s/65534:65534/$APP_USER:$APP_USER_GROUP/g" /etc/passwd
+    sed -i "s/82:82/$APP_USER:$APP_USER_GROUP/g" /etc/passwd
 fi
 
 if [ ! -z "$APP_USER_GROUP" ]; then
-    sed -i "s/65534/$APP_USER_GROUP/g" /etc/group
+    sed -i "s/82/$APP_USER_GROUP/g" /etc/group
 fi
 
 # Cache configuration
@@ -33,7 +33,7 @@ if [ "$env" != "local" ]; then
 else
     echo "Dev: Opcache disabled."
 
-    sed -i "s/opcache.validate_timestamps=0/opcache.validate_timestamps=1/g" /etc/php7/conf.d/opcache.ini
+    sed -i "s/opcache.validate_timestamps=0/opcache.validate_timestamps=1/g" $PHP_INI_DIR/conf.d/opcache.ini
 
 fi
 
@@ -41,13 +41,13 @@ if [ "$role" = "app" ]; then
     cd ~/ && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
 elif [ "$role" = "queue" ]; then
-    sudo -u nobody -g nobody php artisan horizon
+    sudo -u www-data -g www-data php artisan horizon
     exit 1e
 
 elif [ "$role" = "scheduler" ]; then
     while [ true ]
     do
-      sudo -u nobody -g nobody php artisan schedule:run --verbose --no-interaction &
+      sudo -u www-data -g www-data php artisan schedule:run --verbose --no-interaction &
       sleep 60
     done
 
