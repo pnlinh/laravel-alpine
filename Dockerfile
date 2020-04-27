@@ -24,5 +24,7 @@ COPY config/opcache.ini $PHP_INI_DIR/conf.d/
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+WORKDIR /app
+
 EXPOSE 80
 CMD ["start-container"]
