@@ -1,5 +1,5 @@
 # Modeled after https://github.com/Footage-Firm/alpine-laravel
-FROM alpine:3.10
+FROM alpine:edge
 LABEL Maintainer="S.Myagmarsuren <selmonal@gmail.com>" \
       Description="A Laravel optimized Docker image using Alpine Linux."
 
